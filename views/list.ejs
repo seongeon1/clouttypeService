@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <title>Home</title>
+</head>
+<body>
+  <%- include('menu.html')%>
+  <p></p>
+    <div class = 'container input-group ml-2 my-3'>
+        <input class = 'form-control sword' type = 'search' placeholder  = '검색어 입력'>
+        <button class = 'btn btn-success input-group-append sbtn'>검색하기</button>
+    </div>
+  <table class = 'table table-hover table-striped text-center container mt-4'
+    style = 'border: 1px solid;'> 
+      <thead>
+        <tr>
+          <th>제목</th>
+          <th>작성일</th>
+          <th>삭제</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% for (let i = 0; i < data.length; i++){%>
+          <tr>
+            <td><a href = "/content/<%= data[i]._id %>"><%=data[i].title  %></a></td>
+            <td><%=data[i].date %></td>
+            <td><button class = 'delete btn btn-outline-danger' data-id='<%=data[i]._id%>'>삭제</button></td>
+            <!-- date-id='<%data[i]._id%>' HTML의 데이터셋 (data-*, dataset)속성을 사용 ? 자세히는 무슨말인지 모르겠음. -->
+          </tr>
+        <%}%>
+      </tbody>
+  </table>
+  <div class = "container my-3">
+    <button class = 'btn btn-primary enter' style = "float:right;">글쓰기</button>
+  </div>
+
+
+
+
+
+
+
+
+    <!-- 게시물 삭제는 새로고침 없이 처리하는 ajax기법 사용함.
+    ajax동작방식 10주차 68p -->
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script>
+      $('.delete').click(function(e){
+        // 클래스명이 delete인 엘리먼트를 클릭하면 실행됨.
+
+        let sid = e.target.dataset.id;
+        let item = $(this);
+        $.ajax({
+          type: "post",
+          url:'/delete',
+          data : {_id : sid} //data: 서버로 보낼 데이터, req.body에 해당
+          
+        }).done(function(result){
+          //응답에 성공했을 때  
+          //location.reload(); //새로고침
+          item.parent('td').parent('tr').remove(); //해당 부모부모요소를 화면에서삭제, db에서 삭제되는것을확인했으니 안심하고 그냥 편의상 화면에서 바로 없애준다.
+        })
+        .fail(function(xhr,textStatus, errorThrown){
+          //응답에 실패했을 떄, 
+          console.log('게시물 삭제 실패');
+          console.log(xhr, textStatus, errorThrown);
+        })
+      })
+
+      $('.enter').click(function(e){
+        location.href = "/enter";
+      })
+
+      $('.sbtn').click(function(){
+        let inputValue = $('.sword').val();
+        location.href = '\\search?value=' + inputValue;
+      })
+      // $.ajax({
+      //   //type: 요청방식,
+      //   //url:요청 경로,
+      //   //data: 서버로 보낼 데이터//req.body에 해당
+      // }).done(fuction(result)){
+      //   //응답에 성공했을 때
+      // }.fail(function(xhr,thextStatus, errorThrown){
+      //   //응답에 실패했을 떄, 
+      // })
+    </script>
+  </body>
+</html>
