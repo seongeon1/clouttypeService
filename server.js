@@ -1,10 +1,7 @@
-
-
-
-const dotenv = require('dotenv').config();
+require('dotenv').config();
 const mongoclient = require('mongodb').MongoClient;
 const { ObjectId } = require('mongodb');
-const uri =  'mongodb://localhost:27017';
+const uri =  process.env.DB_URI;
 // mongoclient.connect(uri)
 //     .then(client=>{
 //         app.listen(8080, function(){
@@ -14,6 +11,7 @@ const uri =  'mongodb://localhost:27017';
 
 let mydb;
 
+const port = process.env.PORT;
 mongoclient.connect(uri)
     .then((client) => {
         mydb = client.db('dbfirst');
@@ -23,7 +21,7 @@ mongoclient.connect(uri)
 
 
 
-        app.listen(3000, function(){
+        app.listen(port, function(){
             console.log('포트 3000으로 서버 대기중...');
         });
     })
@@ -109,7 +107,6 @@ app.get('/login', function(req, res){
         res.render('login.ejs');
     }
 });
-
 
 
 app.post('/login', function(req, res){
